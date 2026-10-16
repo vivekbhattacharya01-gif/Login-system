@@ -1,13 +1,13 @@
-const monoose = require('mongoose');
+const mongoose = require('mongoose');
 
-const userSchema = new monoose.Schema(
+const userSchema = new mongoose.Schema(
 
     {
 
       name: {
         type: String,
         required: true,
-        TRIM: true
+        trim: true
       },
 
         email: {
@@ -15,7 +15,7 @@ const userSchema = new monoose.Schema(
             required: true,
             unique: true,
             lowercase: true,
-            TRIM: true
+            trim: true
         },
 
         password: {
@@ -31,4 +31,4 @@ const userSchema = new monoose.Schema(
     );
 
 
-    module.exports = monoose.model('User', userSchema);
+    module.exports = mongoose.model('User', userSchema);

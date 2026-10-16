@@ -36,9 +36,11 @@ export function clearAuthToken() {
 }
 
 function getErrorMessage(error, fallback) {
-  if (error.response?.data?.message) return error.response.data.message
+  const message = error.response?.data?.message
+  if (typeof message === 'string' && message.trim()) return message
   if (error.response) return fallback
   if (error.code === 'ECONNABORTED') return 'The server took too long to respond. Please try again.'
+  if (error.code === 'ERR_BAD_RESPONSE') return 'The server returned an invalid response. Please try again.'
   return 'Could not connect to the server. Check that the backend is running and try again.'
 }
 
@@ -69,6 +71,9 @@ export async function registerUser({ name, email, password }) {
 export async function loginUser({ email, password }) {
   try {
     const { data } = await authClient.post('/auth/login', { email, password })
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new Error('The server returned an invalid login response. Please try again.')
+    }
     if (typeof data?.token !== 'string' || !data.token.trim()) {
       throw new Error('Unexpected login response. Expected a JWT token and user object from the API.')
     }
